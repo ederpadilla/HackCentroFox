@@ -10,6 +10,7 @@
     android:layout_width="match_parent"
     android:background="@color/colorPrimaryDark"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical">
     <com.seatgeek.placesautocomplete.PlacesAutocompleteTextView
         android:id="@+id/autocomplete_maps"
@@ -41,7 +42,7 @@
         android:layout_marginTop="20dp"
         android:paddingStart="@dimen/dimen_10dp"
         android:paddingEnd="@dimen/dimen_10dp"
-        android:hint="@string/hint_first_address"
+        android:hint="@string/hint_second_address"
         android:textStyle="bold"
         android:background="@drawable/et_background"
         android:inputType="text"
@@ -68,6 +69,22 @@
         android:id="@+id/btn_fecha"
         android:layout_gravity="center"
         android:background="@drawable/access_button_ripple"
-        android:text="Fecha"/>
+        android:text="Fecha salida"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="@dimen/dimen_30dp"
+        android:layout_marginRight="@dimen/dimen_30dp"
+        android:textColor="@color/colorAccent"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:elevation="@dimen/dimen_10dp"
+        android:textSize="18sp"
+        android:clickable="true"
+        android:id="@+id/btn_fecha_llegada"
+        android:layout_gravity="center"
+        android:background="@drawable/access_button_ripple"
+        android:text="Fecha llegada"/>
 </LinearLayout>
 </ScrollView>

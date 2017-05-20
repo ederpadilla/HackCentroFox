@@ -5,4 +5,5 @@ package androiddeveloper.eder.padilla.hackcentrofox.model;
  */
 
 public class BuscarRuta {
+
 }

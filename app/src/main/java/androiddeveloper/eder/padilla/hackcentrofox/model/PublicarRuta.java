@@ -5,4 +5,22 @@ package androiddeveloper.eder.padilla.hackcentrofox.model;
  */
 
 public class PublicarRuta {
+
+    String id;
+
+    String direccionSalida;
+
+    String direccionLlegada;
+
+    String fechaSalida;
+
+    String fechaLlegada;
+
+    String horaSalida;
+
+    String horaLlegada;
+
+    String espacio;
+
+    String costo;
 }

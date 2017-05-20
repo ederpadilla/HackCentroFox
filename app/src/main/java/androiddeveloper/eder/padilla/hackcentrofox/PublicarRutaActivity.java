@@ -124,7 +124,21 @@ public class PublicarRutaActivity extends AppCompatActivity {
     private void positivePrice(MaterialDialog dialogPrice) {
         dialogPrice.dismiss();
         Main2Activity.textToSpeech.speak("Tu ruta se ah publicado! Muchas gracias", TextToSpeech.QUEUE_FLUSH, null);
+        new MaterialDialog.Builder(PublicarRutaActivity.this)
+                .title(R.string.great)
+                .content("Se publico tu ruta con éxito")
+                .positiveText(R.string.ok)
+                .positiveColorRes(R.color.colorPrimary)
+                .contentColorRes(R.color.colorPrimaryDark)
+                .cancelable(false)
+                .onPositive((dialogExito, which) -> exito(dialogExito))
+                .show();
 
+    }
+
+    private void exito(MaterialDialog dialogExito) {
+        dialogExito.dismiss();
+        this.finish();
     }
 
     private void setPrice(MaterialDialog dialogPrice, CharSequence nameInput) {
@@ -250,5 +264,10 @@ public class PublicarRutaActivity extends AppCompatActivity {
     @OnClick(R.id.btn_fecha)
     public void date(){
         dateFragment();
+    }
+
+    @OnClick(R.id.btn_fecha_llegada)
+    public void fechaLlegada(){
+        newFragmentArrive = new DateOfArrive();
     }
 }
