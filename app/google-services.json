@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "534245360126",
+    "firebase_url": "https://hackcf7-dc485.firebaseio.com",
+    "project_id": "hackcf7-dc485",
+    "storage_bucket": "hackcf7-dc485.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:534245360126:android:0164e265c55840de",
+        "android_client_info": {
+          "package_name": "androiddeveloper.eder.padilla.hackcentrofox"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "534245360126-v9vdanqav37m4efn39vsfb88rio2icr7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "androiddeveloper.eder.padilla.hackcentrofox",
+            "certificate_hash": "0297fedc4b8158e55f60ac422593a5768ed56423"
+          }
+        },
+        {
+          "client_id": "534245360126-d5r23dl6d5ac2qovjo5v7tah6ukrgn56.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvPykPWbWGPx0tJJ9lCFS7D1VdONGXWyo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "534245360126-d5r23dl6d5ac2qovjo5v7tah6ukrgn56.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
