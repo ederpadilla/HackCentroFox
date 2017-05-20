@@ -72,9 +72,6 @@ public class FingerprintHandler  extends FingerprintManager.AuthenticationCallba
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             // User is signed in
-            Util.log("onAuthStateChanged:signed_in:" + user.getUid());
-            Intent i = new Intent(context, Main2Activity.class); //Replace HomeActivity with the name of your activity
-            context.startActivity(i);
 
         } else {
             // User is signed out

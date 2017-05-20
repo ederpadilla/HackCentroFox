@@ -13,6 +13,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.seatgeek.placesautocomplete.DetailsCallback;
 import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView;
 import com.seatgeek.placesautocomplete.model.AddressComponent;
@@ -20,6 +23,10 @@ import com.seatgeek.placesautocomplete.model.AddressComponentType;
 import com.seatgeek.placesautocomplete.model.Place;
 import com.seatgeek.placesautocomplete.model.PlaceDetails;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import androiddeveloper.eder.padilla.hackcentrofox.model.PublicarRuta;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -42,7 +49,9 @@ public class PublicarRutaActivity extends AppCompatActivity {
 
     public static HourArriveFragment hourArriveFragment;
 
+    public static PublicarRuta publicarRuta;
 
+    private FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +60,7 @@ public class PublicarRutaActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setAutoComplete(mAutocompleteOne);
         setAutoComplete(mAutocompletTwo);
+        database = FirebaseDatabase.getInstance();
         mAutocompleteOne.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -76,6 +86,10 @@ public class PublicarRutaActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    publicarRuta=new PublicarRuta();
+                    publicarRuta.setId(Util.generarCodigoRuta());
+                    publicarRuta.setDireccionSalida(mAutocompleteOne.getText().toString());
+                    publicarRuta.setDireccionLlegada(mAutocompletTwo.getText().toString());
                     dateFragment();
                     handled = true;
                 }
@@ -101,7 +115,7 @@ public class PublicarRutaActivity extends AppCompatActivity {
     }
 
     private void setQuantity(MaterialDialog dialog, CharSequence nameInput) {
-
+        publicarRuta.setEspacio(nameInput.toString());
     }
 
     private void quantytySelected(MaterialDialog dialog) {
@@ -122,7 +136,9 @@ public class PublicarRutaActivity extends AppCompatActivity {
     }
 
     private void positivePrice(MaterialDialog dialogPrice) {
+        publicarRuta.setCosto(mCost.getInputEditText().getText().toString());
         dialogPrice.dismiss();
+        writeInDb();
         Main2Activity.textToSpeech.speak("Tu ruta se ah publicado! Muchas gracias", TextToSpeech.QUEUE_FLUSH, null);
         new MaterialDialog.Builder(PublicarRutaActivity.this)
                 .title(R.string.great)
@@ -136,8 +152,32 @@ public class PublicarRutaActivity extends AppCompatActivity {
 
     }
 
+    private void writeInDb() {
+        DatabaseReference mFirebaseDatabase = database.getReference(Util.FIREBASE_DB_RUTA).child(publicarRuta.getId());
+        Map<String, Object> map = new HashMap<>();
+        Util.log("Ruta "+publicarRuta.toString());
+        map.put("direccionSalida",publicarRuta.getDireccionSalida());
+        map.put("direccionLlegada",publicarRuta.getDireccionLlegada());
+        map.put("fechaSalida",publicarRuta.getFechaSalida());
+        map.put("fechaLlegada",publicarRuta.getFechaLlegada());
+        map.put("horaSalida",publicarRuta.getHoraSalida());
+        map.put("horaLlegada",publicarRuta.getHoraLlegada());
+        map.put("espacio",publicarRuta.getEspacio());
+        map.put("costo",publicarRuta.getCosto());
+        map.put("estado",publicarRuta.getEstado());
+        mFirebaseDatabase.updateChildren(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Main2Activity.textToSpeech.speak("Venta lanzada con éxito", TextToSpeech.QUEUE_FLUSH, null);
+
+            }
+        });
+    }
+
     private void exito(MaterialDialog dialogExito) {
         dialogExito.dismiss();
+        Intent intent = new Intent(this,Main2Activity.class);
+        startActivity(intent);
         this.finish();
     }
 

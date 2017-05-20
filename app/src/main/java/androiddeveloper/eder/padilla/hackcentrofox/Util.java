@@ -10,6 +10,9 @@ import java.util.Random;
 
 public class Util {
 
+    public static final String FIREBASE_DB_VENTA = "Ventas";
+    public static final String FIREBASE_DB_RUTA = "Rutas";
+
     public static void log(String message){
         Log.e("::HACK FOX::",message);
     }
@@ -17,7 +20,7 @@ public class Util {
     public static void ERROR(Throwable throwable) {
         Log.e("::::",throwable.getMessage());
     }
-    private String generarCodigoVenta(){
+    public static String generarCodigoVenta(){
         String codigo=null;
         Random r = new Random();
         char penultimaLetra = (char)(r.nextInt(26) + 'a');
@@ -30,7 +33,7 @@ public class Util {
         log(codigo);
         return codigo;
     }
-    private String generarCodigoRuta(){
+    public static String generarCodigoRuta(){
         String codigo=null;
         Random r = new Random();
         char penultimaLetra = (char)(r.nextInt(26) + 'a');
@@ -43,7 +46,7 @@ public class Util {
         log(codigo);
         return codigo;
     }
-    private String generarCodigoDonacion(){
+    public static String generarCodigoDonacion(){
         String codigo=null;
         Random r = new Random();
         char penultimaLetra = (char)(r.nextInt(26) + 'a');
@@ -61,4 +64,6 @@ public class Util {
         int randomNum = rand.nextInt((max - min) + 1) + min;
         return randomNum;
     }
+
+    public static final String FIREBASE_DB_PRODUCT_PICTURE_URL = "gs://hackcf7-dc485.appspot.com/products/";
 }

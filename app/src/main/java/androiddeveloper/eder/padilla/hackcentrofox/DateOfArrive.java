@@ -47,6 +47,7 @@ public class DateOfArrive  extends DialogFragment implements DatePickerDialog.On
         itemCalendar += "-" + String.format("%02d",(month+1));
         itemCalendar += "-" + year;
         Util.log(itemCalendar);
+        PublicarRutaActivity.publicarRuta.setFechaLlegada(itemCalendar);
         Main2Activity.textToSpeech.speak("Seleeciona el espacio en metros cubicos", TextToSpeech.QUEUE_FLUSH, null);
         PublicarRutaActivity.quantityDialog.show();
 

@@ -49,6 +49,7 @@ public void onDateSet(DatePicker view, int year, int month, int day) {
         itemCalendar += "-" + String.format("%02d",(month+1));
         itemCalendar += "-" + year;
         Util.log(itemCalendar);
+        Main2Activity.venderProducto.setFechaDeCaducidad(itemCalendar);
         Main2Activity.textToSpeech.speak("Selecciona una categoría", TextToSpeech.QUEUE_FLUSH, null);
         Main2Activity.categoryDialog.show();
             /*if (temp.contains("YYYY"))

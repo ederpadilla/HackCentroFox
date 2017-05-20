@@ -37,6 +37,7 @@ public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         itemCalendar += ":" + String.format("%02d",minute);
         //itemCalendar;
         Main2Activity.textToSpeech.speak("Seleeciona el costo", TextToSpeech.QUEUE_FLUSH, null);
+        PublicarRutaActivity.publicarRuta.setHoraLlegada(itemCalendar);
         PublicarRutaActivity.mCost.show();
 
         }

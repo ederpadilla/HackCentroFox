@@ -25,9 +25,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Main2Activity" />
-        <activity android:name=".PublicarRutaActivity" />
-        <activity android:name=".BuscarRutasActivity"></activity>
+        <activity android:name=".Main2Activity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".PublicarRutaActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".BuscarRutasActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

@@ -12,6 +12,8 @@ import android.widget.DatePicker;
 
 import java.util.Calendar;
 
+import androiddeveloper.eder.padilla.hackcentrofox.model.PublicarRuta;
+
 /**
  * Created by ederpadilla on 20/05/17.
  */
@@ -47,6 +49,7 @@ public class DateOfRouteFragment extends DialogFragment implements DatePickerDia
         itemCalendar += "-" + String.format("%02d",(month+1));
         itemCalendar += "-" + year;
         Util.log(itemCalendar);
+        PublicarRutaActivity.publicarRuta.setFechaSalida(itemCalendar);
         Main2Activity.textToSpeech.speak("Seleeciona la fecha de llegada", TextToSpeech.QUEUE_FLUSH, null);
         PublicarRutaActivity.newFragmentArrive.show(getFragmentManager(), "datepicker");
         //Main2Activity.categoryDialog.show();

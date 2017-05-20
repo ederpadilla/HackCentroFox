@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -18,17 +19,28 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
+import androiddeveloper.eder.padilla.hackcentrofox.model.DonarProducto;
+import androiddeveloper.eder.padilla.hackcentrofox.model.PublicarRuta;
+import androiddeveloper.eder.padilla.hackcentrofox.model.VenderProducto;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class Main2Activity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
+public class Main2Activity extends AppCompatActivity {
 //transporte independiente
 
     @BindView(R.id.help_transport)
@@ -48,6 +60,17 @@ public class Main2Activity extends AppCompatActivity implements DatePickerDialog
 
     private String uUId;
 
+    private FirebaseDatabase database;
+    private StorageReference mStorageRef;
+    private FirebaseUser firebaseUser;
+
+    byte[] byteArray;
+
+    String price;
+
+    public static DonarProducto donarProducto;
+
+    public static VenderProducto venderProducto;
 
     public static TextToSpeech textToSpeech;
 
@@ -55,7 +78,7 @@ public class Main2Activity extends AppCompatActivity implements DatePickerDialog
 
     private Bitmap bitmap;
 
-    public static MaterialDialog calendarDialog , categoryDialog,thanksDialog;
+    public static MaterialDialog calendarDialog , categoryDialog,thanksDialog,priceDialog;
 
 
     @Override
@@ -77,16 +100,24 @@ public class Main2Activity extends AppCompatActivity implements DatePickerDialog
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.setStatusBarColor(getColor(R.color.colorPrimary));
         }
-        mAuth = FirebaseAuth.getInstance();
+        firebaseInit();
         FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
+
+    }
+
+    private void firebaseInit() {
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
             // User is signed in
-            Util.log("onAuthStateChanged:signed_in: " + user.getUid());
-            uUId =user.getUid();
+            Util.log("onAuthStateChanged:signed_in: " + firebaseUser.getUid());
+            uUId =firebaseUser.getUid();
         } else {
             // User is signed out
             Util.log("onAuthStateChanged:signed_out");
         }
+        mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     @OnClick(R.id.help_transport)
@@ -189,6 +220,8 @@ public class Main2Activity extends AppCompatActivity implements DatePickerDialog
         try {
             Intent chooseImageIntent = ImagePicker.getPickImageIntent(getApplicationContext());
             this.startActivityForResult(chooseImageIntent, PHOTO_TO_SELL);
+            venderProducto= new VenderProducto();
+            venderProducto.setId(Util.generarCodigoVenta());
         } catch (android.content.ActivityNotFoundException ex) {
             // Potentially direct the user to the Market with a Dialog
             Toast.makeText(getApplicationContext(),getString(R.string.install_app),
@@ -209,19 +242,12 @@ public class Main2Activity extends AppCompatActivity implements DatePickerDialog
                         @Override
                         protected Void doInBackground(Void... voids) {
                             bitmap = ImagePicker.getImageFromResult(getApplicationContext(), resultCode, data);
-                            bitmap = Bitmap.createScaledBitmap(bitmap,320,320,false);
+                            bitmap = Bitmap.createScaledBitmap(bitmap,120,120,false);
 
                             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                             bitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
-                            byte[] byteArray = byteArrayOutputStream.toByteArray();
+                            byteArray = byteArrayOutputStream.toByteArray();
 
-
-                            String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-                            String bytes = byteArray.toString();
-                            //String encoded = encodeToBase64(bitmap,Bitmap.CompressFormat.PNG,100);
-
-                            //imgBase64.add(encoded);
-                            //base64= ImageUtil.convert(bitmap);
                             return null;
                         }
 
@@ -229,9 +255,10 @@ public class Main2Activity extends AppCompatActivity implements DatePickerDialog
                         protected void onPostExecute(Void aVoid) {
                             //imageView.setImageBitmap(bitmap);
                             Util.log("se obtiene la imagen");
-                            dialogCaducir();
-
-
+                            mStorageRef= FirebaseStorage.getInstance().getReferenceFromUrl(Util.FIREBASE_DB_PRODUCT_PICTURE_URL).child(venderProducto.getId());
+                            UploadTask uploadTask = mStorageRef.putBytes(byteArray);
+                            uploadTask.addOnFailureListener(e -> e.toString())
+                                    .addOnSuccessListener(taskSnapshot -> setImageUrl(taskSnapshot));
                             super.onPostExecute(aVoid);
 
                         }
@@ -242,6 +269,13 @@ public class Main2Activity extends AppCompatActivity implements DatePickerDialog
                 }
                 break;
         }
+
+    }
+
+    private void setImageUrl(UploadTask.TaskSnapshot taskSnapshot) {
+        venderProducto.setImagen(taskSnapshot.getDownloadUrl().toString());
+        dialogCaducir();
+
 
     }
 
@@ -271,6 +305,9 @@ public class Main2Activity extends AppCompatActivity implements DatePickerDialog
                 .show();
         categoryDialog.dismiss();
     }
+    private void setInput(MaterialDialog dialog, CharSequence input) {
+        venderProducto.setCategoria(input.toString());
+    }
 
     private void categorySelected(MaterialDialog categoryDialog) {
         textToSpeech.speak("Ingrese el nombre del producto", TextToSpeech.QUEUE_FLUSH, null);
@@ -279,54 +316,80 @@ public class Main2Activity extends AppCompatActivity implements DatePickerDialog
                 .positiveText(R.string.ok)
                 .positiveColorRes(R.color.colorPrimary)
                 .cancelable(false)
-                .input("Nombre","",(dialog, nameInput) -> setInput(dialog,nameInput))
-                .onPositive((dialog, which) -> nameSelected(dialog))
+                .input("Nombre","",(dialog, nameInput) -> setName(dialog,nameInput))
+                .onPositive((dialog, which) -> placeSelect(dialog))
                 .show();
+    }
+
+    private void setName(MaterialDialog dialog, CharSequence nameInput) {
+        venderProducto.setNombre(nameInput.toString());
+    }
+
+    private void placeSelect(MaterialDialog dialog) {
+        dialog.dismiss();
+        textToSpeech.speak("Lugar donde se encuentra el producto.", TextToSpeech.QUEUE_FLUSH, null);
+        new MaterialDialog.Builder(Main2Activity.this)
+                .title(R.string.place)
+                .positiveText(R.string.ok)
+                .positiveColorRes(R.color.colorPrimary)
+                .cancelable(false)
+                .input("Lugar","",(dialogPlace, nameInput) -> setInputPlace(dialogPlace,nameInput))
+                .onPositive((dialogPlace, which) -> nameSelected(dialogPlace))
+                .show();
+
+    }
+
+    private void setInputPlace(MaterialDialog dialogPlace, CharSequence nameInput) {
+        venderProducto.setLugar(nameInput.toString());
     }
 
     private void nameSelected(MaterialDialog dialog) {
         textToSpeech.speak("Por último ingrese el costo del producto.", TextToSpeech.QUEUE_FLUSH, null);
-        new MaterialDialog.Builder(Main2Activity.this)
+        priceDialog = new MaterialDialog.Builder(Main2Activity.this)
                 .title(R.string.price)
                 .positiveText(R.string.ok)
                 .positiveColorRes(R.color.colorPrimary)
                 .cancelable(false)
-                .input("Costo","",(dialogPrice, priceInput) -> setPrice(dialogPrice,priceInput))
+                .input("Precio","",(dialogPrice, nameInput) -> setPrice(dialogPrice,nameInput))
                 .onPositive((dialogPrice, which) -> priceSelected(dialogPrice))
                 .show();
 
     }
 
+    private void setPrice(MaterialDialog dialogPrice, CharSequence nameInput) {
+        venderProducto.setCosto(nameInput.toString());
+        price = nameInput.toString();
+        Util.log("se supone es "+price);
+    }
+
+
     private void priceSelected(MaterialDialog dialogPrice) {
+        venderProducto.setCosto(priceDialog.getInputEditText().getText().toString());
+        venderProducto.setPrice(priceDialog.getInputEditText().getText().toString());
         dialogPrice.dismiss();
+
+        DatabaseReference mFirebaseDatabase = database.getReference(Util.FIREBASE_DB_VENTA).child(venderProducto.getId());
+        Map<String, Object> map = new HashMap<>();
+        Util.log("Vender "+venderProducto.toString());
+        map.put("estado",venderProducto.getCategoria());
+        map.put("imagen",venderProducto.getImagen());
+        map.put("fechaDeCaducidad",venderProducto.getFechaDeCaducidad());
+        map.put("categoria",venderProducto.getCategoria());
+        map.put("nombre",venderProducto.getNombre());
+        map.put("price",venderProducto.getPrice());
+        map.put("costo",venderProducto.getCosto());
+        map.put("lugar",venderProducto.getLugar());
+        mFirebaseDatabase.updateChildren(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                textToSpeech.speak("Venta lanzada con éxito", TextToSpeech.QUEUE_FLUSH, null);
+
+            }
+        });
     }
 
-    private void setPrice(MaterialDialog dialogPrice, CharSequence priceInput) {
-
-    }
-
-    public void requestCategory(){
-      new MaterialDialog.Builder(Main2Activity.this)
-                .title(R.string.expire_date)
-                .positiveText(R.string.ok)
-                .positiveColorRes(R.color.colorPrimary)
-                .cancelable(false)
-                .input("Categoría","Tomate",(dialog, input) -> setInput(dialog,input))
-                .onPositive((dialog, which) -> datePick(dialog))
-                .show();
-    }
-
-    private void setInput(MaterialDialog dialog, CharSequence input) {
-
-    }
-
-    @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
-    }
 
     private void donate() {
-
         textToSpeech.speak("Seleccione el destino de la donación", TextToSpeech.QUEUE_FLUSH, null);
         new MaterialDialog.Builder(this)
                 .title(R.string.donation_destiny)

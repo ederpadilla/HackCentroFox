@@ -41,4 +41,5 @@
     <string name="hint_second_address">Dirección de destino final.</string>
     <string name="quantyty">Espacio en m2</string>
     <string name="auth_failed">No se pudo inicia sesión</string>
+    <string name="place">Lugar de procedencia</string>
 </resources>

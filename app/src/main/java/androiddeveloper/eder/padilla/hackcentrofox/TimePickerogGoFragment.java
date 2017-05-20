@@ -11,6 +11,8 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 
+import androiddeveloper.eder.padilla.hackcentrofox.model.PublicarRuta;
+
 /**
  * Created by ederpadilla on 20/05/17.
  */
@@ -37,6 +39,7 @@ public class TimePickerogGoFragment extends DialogFragment
         itemCalendar += "" + String.format("%02d",hourOfDay);
         itemCalendar += ":" + String.format("%02d",minute);
         Main2Activity.textToSpeech.speak("Seleeciona la hora de llegada", TextToSpeech.QUEUE_FLUSH, null);
+        PublicarRutaActivity.publicarRuta.setHoraSalida(itemCalendar);
         PublicarRutaActivity.hourArriveFragment.show(getActivity().getFragmentManager(),"timearrive");
         //itemCalendar;
 
