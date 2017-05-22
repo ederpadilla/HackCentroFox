@@ -11,7 +11,9 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.menu.MenuView;
 import android.util.Base64;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.DatePicker;
@@ -60,7 +62,7 @@ public class Main2Activity extends AppCompatActivity {
 
     private String uUId;
 
-    private FirebaseDatabase database;
+    public static FirebaseDatabase database;
     private StorageReference mStorageRef;
     private FirebaseUser firebaseUser;
 
@@ -78,7 +80,7 @@ public class Main2Activity extends AppCompatActivity {
 
     private Bitmap bitmap;
 
-    public static MaterialDialog calendarDialog , categoryDialog,thanksDialog,priceDialog;
+    public static MaterialDialog calendarDialog , categoryDialog,thanksDialog,priceDialog,conceptDonation,dialogOrganizations;
 
 
     @Override
@@ -212,6 +214,7 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     private void buy() {
+
         Util.log("si entra a buy");
     }
 
@@ -273,6 +276,10 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     private void setImageUrl(UploadTask.TaskSnapshot taskSnapshot) {
+        venderProducto.setEstado("disponible");
+        venderProducto.setLugarDeDestino("sindefinir");
+        venderProducto.setTipoDePaqueteria("sindefinir");
+        venderProducto.setFechaDeEntrega("sindefinir");
         venderProducto.setImagen(taskSnapshot.getDownloadUrl().toString());
         dialogCaducir();
 
@@ -371,7 +378,8 @@ public class Main2Activity extends AppCompatActivity {
         DatabaseReference mFirebaseDatabase = database.getReference(Util.FIREBASE_DB_VENTA).child(venderProducto.getId());
         Map<String, Object> map = new HashMap<>();
         Util.log("Vender "+venderProducto.toString());
-        map.put("estado",venderProducto.getCategoria());
+        map.put("id",venderProducto.getId());
+        map.put("estado",venderProducto.getEstado());
         map.put("imagen",venderProducto.getImagen());
         map.put("fechaDeCaducidad",venderProducto.getFechaDeCaducidad());
         map.put("categoria",venderProducto.getCategoria());
@@ -379,6 +387,9 @@ public class Main2Activity extends AppCompatActivity {
         map.put("price",venderProducto.getPrice());
         map.put("costo",venderProducto.getCosto());
         map.put("lugar",venderProducto.getLugar());
+        map.put("lugarDeDestino",venderProducto.getLugarDeDestino());
+        map.put("tipoDePaqueteria",venderProducto.getTipoDePaqueteria());
+        map.put("fechaDeEntrega",venderProducto.getFechaDeEntrega());
         mFirebaseDatabase.updateChildren(map).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -391,19 +402,28 @@ public class Main2Activity extends AppCompatActivity {
 
     private void donate() {
         textToSpeech.speak("Seleccione el destino de la donación", TextToSpeech.QUEUE_FLUSH, null);
-        new MaterialDialog.Builder(this)
+        donarProducto = new DonarProducto();
+        donarProducto.setId(Util.generarCodigoDonacion());
+        dialogOrganizations = new MaterialDialog.Builder(this)
                 .title(R.string.donation_destiny)
                 .items(R.array.preference_values)
-                .itemsCallbackSingleChoice(0,(dialog, itemView, which, text) -> getChoice(text))
+                .itemsCallbackSingleChoice(0,(dialog, itemView, which, text) -> getChoice(text,itemView))
                 .positiveText(R.string.choose)
                 .onPositive((dialog, which) -> donationDestinySelcted(dialog))
                 .show();
     }
 
+    private boolean getChoice(CharSequence text, View itemView) {
+        Util.log("Esta esto "+text+" itemview "+itemView.toString());
+        donarProducto.setOrganizacion(text.toString());
+        return true;
+    }
+
     private void donationDestinySelcted(MaterialDialog dialog) {
+
         dialog.dismiss();
         textToSpeech.speak("Ingrese el concepto de la donación", TextToSpeech.QUEUE_FLUSH, null);
-        new MaterialDialog.Builder(Main2Activity.this)
+        conceptDonation = new MaterialDialog.Builder(Main2Activity.this)
                 .title(R.string.donationConcept)
                 .positiveText(R.string.ok)
                 .positiveColorRes(R.color.colorPrimary)
@@ -414,10 +434,10 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     private void setDonationConcept(MaterialDialog dialogDonation, CharSequence inputDonation) {
-
     }
 
     private void donationConcept(MaterialDialog dialogDonation) {
+        donarProducto.setConcepto(conceptDonation.getInputEditText().getText().toString());
         dialogDonation.dismiss();
         textToSpeech.speak("Por íultimo ingrese la fecha de entrega porfavor.", TextToSpeech.QUEUE_FLUSH, null);
         DonationDate newFragment = new DonationDate();
@@ -436,8 +456,5 @@ public class Main2Activity extends AppCompatActivity {
         dialog.dismiss();
     }
 
-    private boolean getChoice(CharSequence text) {
-     Util.log("text "+text);
-        return true;
-    }
+
 }

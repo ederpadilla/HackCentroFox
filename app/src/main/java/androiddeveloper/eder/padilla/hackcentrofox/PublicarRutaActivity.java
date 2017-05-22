@@ -125,7 +125,7 @@ public class PublicarRutaActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "time");
         hourArriveFragment = new HourArriveFragment();
         mCost= new MaterialDialog.Builder(PublicarRutaActivity.this)
-                .title(R.string.price)
+                .title(R.string.price_rout)
                 .positiveText(R.string.ok)
                 .positiveColorRes(R.color.colorPrimary)
                 .cancelable(false)
@@ -156,6 +156,8 @@ public class PublicarRutaActivity extends AppCompatActivity {
         DatabaseReference mFirebaseDatabase = database.getReference(Util.FIREBASE_DB_RUTA).child(publicarRuta.getId());
         Map<String, Object> map = new HashMap<>();
         Util.log("Ruta "+publicarRuta.toString());
+        map.put("id",publicarRuta.getId());
+        map.put("estado","");
         map.put("direccionSalida",publicarRuta.getDireccionSalida());
         map.put("direccionLlegada",publicarRuta.getDireccionLlegada());
         map.put("fechaSalida",publicarRuta.getFechaSalida());

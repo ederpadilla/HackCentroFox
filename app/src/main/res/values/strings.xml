@@ -42,4 +42,8 @@
     <string name="quantyty">Espacio en m2</string>
     <string name="auth_failed">No se pudo inicia sesión</string>
     <string name="place">Lugar de procedencia</string>
+    <string name="nombre_simple">Nombre</string>
+    <string name="wish_to_buy">¿Deseas solicitar este viaje para algún cargamento?</string>
+    <string name="cancel">Cancelar</string>
+    <string name="price_rout">Por último menciona el costo del viaje.</string>
 </resources>

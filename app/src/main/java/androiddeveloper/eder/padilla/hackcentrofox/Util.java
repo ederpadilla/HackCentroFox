@@ -12,6 +12,7 @@ public class Util {
 
     public static final String FIREBASE_DB_VENTA = "Ventas";
     public static final String FIREBASE_DB_RUTA = "Rutas";
+    public static final String FIREBASE_DB_DONATION = "Donaciones";
 
     public static void log(String message){
         Log.e("::HACK FOX::",message);

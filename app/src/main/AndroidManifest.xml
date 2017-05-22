@@ -25,12 +25,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Main2Activity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".PublicarRutaActivity"
+        <activity
+            android:name=".Main2Activity"
             android:screenOrientation="portrait" />
-        <activity android:name=".BuscarRutasActivity"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".PublicarRutaActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".BuscarRutasActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".BuyActivity"></activity>
     </application>
 
 </manifest>

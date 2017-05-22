@@ -33,5 +33,10 @@
     <style name="AppTheme_places" parent="android:Theme.Material.Light.DarkActionBar">
         <item name="pacv_placesAutoCompleteTextViewStyle">@android:style/Widget.Material.EditText</item>
     </style>
-
+    <style name="myt_item_tv_style">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

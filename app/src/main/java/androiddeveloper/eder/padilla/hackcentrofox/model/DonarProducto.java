@@ -16,12 +16,26 @@ public class DonarProducto {
 
     String tipoDePaqueteria;
 
-    public DonarProducto(String organizacion, String donacion, String concepto, String fechaDeEntrega, String tipoDePaqueteria) {
+    String id;
+
+    public DonarProducto() {
+    }
+
+    public DonarProducto(String organizacion, String donacion, String concepto, String fechaDeEntrega, String tipoDePaqueteria, String id) {
         this.organizacion = organizacion;
         this.donacion = donacion;
         this.concepto = concepto;
         this.fechaDeEntrega = fechaDeEntrega;
         this.tipoDePaqueteria = tipoDePaqueteria;
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getOrganizacion() {
@@ -72,6 +86,7 @@ public class DonarProducto {
                 ", concepto='" + concepto + '\'' +
                 ", fechaDeEntrega='" + fechaDeEntrega + '\'' +
                 ", tipoDePaqueteria='" + tipoDePaqueteria + '\'' +
+                ", id='" + id + '\'' +
                 '}';
     }
 }
